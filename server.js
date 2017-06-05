@@ -46,10 +46,19 @@ db.on("error", function(error) {
 db.once("open", function() {
   console.log("Mongoose connection successful.");
 });
-// ========================Working functions here========================
+// ========================Request functions here========================
 app.get("/", function(req, res) {
-  res.send("Hello world");
-  // res.send(index.html);
+  var result = {};
+  //send something empty
+  var hbsObjects = {
+    articles: result
+  };
+  res.render("index");
+});
+
+app.get("/articles/saved", function(req, res) {
+  res.render("savedArticles");
+
   // res.render("index",)
 });
 
@@ -57,20 +66,21 @@ app.get("/scrape", function(req, res) {
 
   request("https://la.eater.com/neighborhood/el-monte", function(error, response, html) {
     var $ = cheerio.load(html);
-    //document.querySelectorAll("div.m-entry-box__body").length;
+    var result = [];
+
     $("div.m-entry-box__body").each(function(i, element) {
 
       //save empty result object
-      var result = {};
+      var resultToMongoose = {};
 
       //add title, blurb, and link and save them as properties of the result object
-      result.title = $(element).find("h3").text();
-      result.blurb = $(element).find("p.m-entry-box__blurb").text();
-      result.link = $(element).find("a").attr("href");
+      resultToMongoose.title = $(element).find("h3").text();
+      resultToMongoose.blurb = $(element).find("p.m-entry-box__blurb").text();
+      resultToMongoose.link = $(element).find("a").attr("href");
 
       //creates a new Artivle model with entry. Article is passed with result
-      var entry = new Article(result);
-
+      var entry = new Article(resultToMongoose);
+      result.push(entry);
       //entry is saved to the db
       entry.save(function(err, doc) {
         if (err) {
@@ -80,9 +90,14 @@ app.get("/scrape", function(req, res) {
         }
       });
     });
+    var hbsObject = {
+      articles: result
+    }
+    //sends back to app.js
+    res.send(result);
+    //sends to index.handlebars to render divs
+    res.render("index", hbsObject);
   });
-  // Tell the browser that we finished scraping the text
-  res.send("Scrape Complete");
 });
 
 //call JSON API

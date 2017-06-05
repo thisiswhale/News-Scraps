@@ -43,7 +43,7 @@
       <div class="modal-content">
         <div class="modal-body">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h2 class="text-center" id="collect-modal-input">You got nothing</h2>
+          <h2 class="text-center" id="collect-modal-input">Looking...</h2>
         </div>
       </div>
     </div>
@@ -60,11 +60,33 @@
 
   <div class="container">
     <div class="row" id="article-entry">
-      <div class="col-lg-12 text-center">
-        <h3>There are no articles here.</h3>
-        <br>
-        <br>
+
+      <div class="col-lg-12 ">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title pull-left">{{this.title}}</h3>
+            <button type="button" class=" btn btn-primary pull-right" data-id="{{this._id}}">Save Article</button>
+
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">
+            <a href="{{this.link}}">{{this.blurb}}</a>
+          </div>
+        </div>
       </div>
+
+      <div class="col-lg-12 text-center">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">{{this.title}}</h3>
+            <button type="button" class=" btn de-btn btn-primary pull-right" data-id="{{this._id}}">Save Article</button>
+          </div>
+          <div class="panel-body">
+            <a href={ {this.link}}>{{this.blurb}}</a>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 

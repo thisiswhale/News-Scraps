@@ -1,6 +1,7 @@
 body{
   width:100%
 }
+
 .jumbotron {
   background-image: url("https://s-media-cache-ak0.pinimg.com/originals/04/98/72/0498727b398f6225a464784016f19215.jpg");
   background-size: 100%;
@@ -11,11 +12,25 @@ body{
   box-shadow: 0px 0px 50px 0px black;
 }
 
-#article-entry {
+#article-empty {
   box-shadow: 0px 0px 5px 0px black;
   color: #f0efd9;
   background-color: #6132bd;
   margin-bottom: 10px;
+}
+
+#article-entry {
+  box-shadow: 0px 0px 5px 0px black;
+
+}
+
+.panel-heading h3 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: normal;
+    width: 75%;
+    padding-top: 6px;
 }
 
 .navbar-fixed-bottom {
