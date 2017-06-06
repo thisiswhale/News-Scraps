@@ -21,9 +21,7 @@ var app = express();
 
 //morgan and body parser
 app.use(logger("dev"));
-app.use(bodyParser.urlencoded({
-  extended: false
-}));
+app.use(bodyParser.urlencoded({extended: false}));
 
 //make public a static dir
 app.use(express.static("public"));
@@ -33,9 +31,7 @@ mongoose.connect("mongodb://localhost/website");
 var db = mongoose.connection;
 
 // Set Handlebars as the default templating engine.
-app.engine("handlebars", exphbs({
-  defaultLayout: "main"
-}));
+app.engine("handlebars", exphbs({defaultLayout: "main"}));
 app.set("view engine", "handlebars");
 
 //print out errors if mongodb runs into issues
@@ -48,26 +44,25 @@ db.once("open", function() {
 });
 // ========================Request functions here========================
 app.get("/", function(req, res) {
-  var result = {};
   //send something empty
-  var hbsObjects = {
-    articles: result
-  };
-  res.render("index");
-});
-
-app.get("/articles/saved", function(req, res) {
-  res.render("savedArticles");
-
-  // res.render("index",)
+  Article.find({}, function(error, doc) {
+//    console.log("doc is " +doc);
+    if (error) {
+      console.log(error);
+    } else {
+      var hbsObjects = {
+        articles: doc
+      };
+      console.log(hbsObjects);
+      res.render("index", hbsObjects);
+    }
+  });
 });
 
 app.get("/scrape", function(req, res) {
-
   request("https://la.eater.com/neighborhood/el-monte", function(error, response, html) {
     var $ = cheerio.load(html);
     var result = [];
-
     $("div.m-entry-box__body").each(function(i, element) {
 
       //save empty result object
@@ -77,6 +72,7 @@ app.get("/scrape", function(req, res) {
       resultToMongoose.title = $(element).find("h3").text();
       resultToMongoose.blurb = $(element).find("p.m-entry-box__blurb").text();
       resultToMongoose.link = $(element).find("a").attr("href");
+      resultToMongoose.saved = false;
 
       //creates a new Artivle model with entry. Article is passed with result
       var entry = new Article(resultToMongoose);
@@ -90,14 +86,15 @@ app.get("/scrape", function(req, res) {
         }
       });
     });
-    var hbsObject = {
-      articles: result
-    }
     //sends back to app.js
     res.send(result);
-    //sends to index.handlebars to render divs
-    res.render("index", hbsObject);
   });
+});
+
+app.get("/articles/saved", function(req, res) {
+  res.render("savedArticles");
+
+  // res.render("index",)
 });
 
 //call JSON API
@@ -121,9 +118,7 @@ app.get("/article/:id", function(req, res) {
     } else {
       Article.findOneAndUpdate({
         _id: req.params.id
-      }, {
-        note: doc._id
-      }).exec(function(err, doc) {
+      }, {note: doc._id}).exec(function(err, doc) {
         if (err) {
           console.log(err);
         } else {

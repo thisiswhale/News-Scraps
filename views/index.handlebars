@@ -9,7 +9,12 @@
 
 <div class="container">
 
-  {{#if articles.count}}
+  <div>
+    look here {{this.articles.length}}
+  </div>
+
+  {{#if articles.length}}
+
     <div class="row" id="article-entry">
       {{#each articles}}
         <div class="col-lg-12 ">

@@ -6,7 +6,8 @@ var ArticleSchema = new Schema({
 
   title: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   blurb: {
     type: String,
@@ -15,6 +16,10 @@ var ArticleSchema = new Schema({
   link: {
     type: String,
     required: true
+  },
+  saved:{
+    type: Boolean,
+    required:true,
   },
   note: {
     type: Schema.Types.ObjectId,

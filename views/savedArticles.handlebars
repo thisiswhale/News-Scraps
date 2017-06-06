@@ -4,20 +4,33 @@
     <p>
       <i>From EATER: Los Angeles</i>
     </p>
-    <br />
-    <br />
+    <br>
+    <br>
     <p>
-      <Strong>Saved Articles</Strong>
+      <strong>Saved Articles</strong>
     </p>
   </div>
 </div>
 
+
 <div class="container">
+
   <div class="row" id="article-entry">
-    <div class="col-lg-12 text-center">
-      <h3>There are no articles here.</h3>
-      <br>
-      <br>
-    </div>
+    {{#each articles}}
+      <div class="col-lg-12 ">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <a href="{{this.link}}"><h3 class="panel-title pull-left">{{this.title}}</h3></a>
+
+            <button type="button" class=" btn btn-primary pull-right" data-id="{{this._id}}">Save Article</button>
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">
+            <p>
+              {{this.blurb}}
+            </p>
+          </div>
+        </div>
+      </div>
+    {{/each}}
   </div>
-</div>

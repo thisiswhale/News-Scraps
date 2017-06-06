@@ -14,16 +14,22 @@ $(document).on("click", "#btn-scrape", function() {
   // $.getJSON("/scrape", function(data){
   //   console.log("Scrape button activated: ", data);
   // });
-  $.ajax({
-    type: "GET",
-    url: "/scrape",
-    dataType: "json"
-  }).done(function(data) {
-    console.log("Scrape button activated: ", data);
-
-    $("#collect-modal-input").append(data.length + " entries found.")
-
+  //$.getJSON
+  $.get("/scrape",function(data){
+        console.log("Scrape button activated: ", data);
+        $("#collect-modal-input").append(data.length + " entries found.");
+        $(location).attr("href","/");
   });
+  // $.ajax({
+  //   type: "GET",
+  //   url: "/scrape",
+  //   dataType: "json"
+  // }).done(function(data) {
+  //   console.log("Scrape button activated: ", data);
+  //
+  //   $("#collect-modal-input").append(data.length + " entries found.")
+  //
+  // });
 });
 
 // $(document).on("click", "#btn-", function() {
