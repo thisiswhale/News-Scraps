@@ -26,8 +26,15 @@ app.use(bodyParser.urlencoded({extended: false}));
 //make public a static dir
 app.use(express.static("public"));
 
-//Dataase configuration with mongoose
-mongoose.connect("mongodb://localhost/website");
+//Database configuration with mongoose
+if(process.env.MONGODB_URI){
+//===========Heroku App==================
+  mongoose.connect(process.env.MONGODB_URI);
+}
+else{
+//===========LOCAL=======================
+  mongoose.connect("mongodb://localhost/website");
+}
 var db = mongoose.connection;
 
 // Set Handlebars as the default templating engine.
