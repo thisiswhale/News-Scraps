@@ -46,7 +46,7 @@ db.once("open", function() {
 app.get("/", function(req, res) {
   //send something empty
   Article.find({}, function(error, doc) {
-//    console.log("doc is " +doc);
+    //    console.log("doc is " +doc);
     if (error) {
       console.log(error);
     } else {
@@ -60,7 +60,7 @@ app.get("/", function(req, res) {
 });
 
 app.get("/scrape", function(req, res) {
-  request("https://la.eater.com/neighborhood/el-monte", function(error, response, html) {
+  request("https://la.eater.com/neighborhood/woodland-hills", function(error, response, html) {
     var $ = cheerio.load(html);
     var result = [];
     $("div.m-entry-box__body").each(function(i, element) {
@@ -91,13 +91,80 @@ app.get("/scrape", function(req, res) {
   });
 });
 
+//directs to render all saved articles when saved = true
 app.get("/articles/saved", function(req, res) {
-  res.render("savedArticles");
-
-  // res.render("index",)
+  Article.find({
+    saved: true
+  }, function(error, doc) {
+    if (error) {
+      console.log(error);
+    } else {
+      var hbsObjects = {
+        articles: doc
+      };
+      console.log(hbsObjects);
+      res.render("savedArticles", hbsObjects);
+    }
+  });
 });
 
-//call JSON API
+app.get("/articles/save/:id", function(req, res) {
+
+  Article.update({
+    "_id": req.params.id
+  }, {
+    $set: {
+      saved: true
+    }
+  }, function(error, edited) {
+    if (error) {
+      console.log(error)
+    } else {
+      res.redirect("/");
+    }
+  });
+});
+
+//Create a new note or replace an existing note
+app.post("/article/saved/note/:id", function(req, res) {
+  var newNote = new Note(req.body);
+
+  newNote.save(function(error, doc) {
+    if (error) {
+      console.log(error);
+    } else {
+      Article.findOneAndUpdate({
+        _id: req.params.id
+      }, {
+        title: doc.body.title,
+        body: doc.body.body
+      }).exec(function(err, doc) {
+        if (err) {
+          console.log(err);
+        } else {
+          res.redirect("/articles/saved");
+        }
+      });
+    }
+  });
+});
+
+app.post("/article/save/:id", function(req, res) {
+
+  Note.findOneAndRemove({
+    "_id":req.params.id
+  }, function(error, doc) {
+    if (error) {
+      console.log(error);
+    } else {
+      res.redirect("/articles/saved");
+    }
+  });
+
+
+});
+
+//call JSON API for refrence
 app.get("/scrape/api", function(req, res) {
   entry.find({}, function(err, found) {
     if (err) {
@@ -108,31 +175,6 @@ app.get("/scrape/api", function(req, res) {
   });
 });
 
-//Create a new note or replace an existing note
-app.get("/article/:id", function(req, res) {
-  var newNote = new Note(req.body);
-
-  newNote.save(function(error, doc) {
-    if (error) {
-      console.log(error);
-    } else {
-      Article.findOneAndUpdate({
-        _id: req.params.id
-      }, {note: doc._id}).exec(function(err, doc) {
-        if (err) {
-          console.log(err);
-        } else {
-          res.send(doc)
-        }
-      });
-    }
-  });
-});
-
-// app.get("/article/saved/remove/:id", function(req,res){
-//
-//
-// })
 //=============================End========================================
 app.listen(3000, function() {
   console.log("App running on port 3000!");

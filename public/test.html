@@ -41,9 +41,19 @@
   <div class="modal fade" id="collect-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <div class="modal-body">
+
+        <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h2 class="text-center" id="collect-modal-input">Looking...</h2>
+          <h2 class="text-center" id="collect-modal-input">{{this.title}}</h2>
+        </div>
+
+        <div class="modal-body">
+          <textarea class="form-control" rows="8"></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary save-note-change">Save changes</button>
         </div>
       </div>
     </div>
@@ -65,8 +75,8 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title pull-left">{{this.title}}</h3>
-            <button type="button" class=" btn btn-primary pull-right" data-id="{{this._id}}">Save Article</button>
-
+            <button type="button" class="btn btn-primary pull-right saved-page" data-id="{{this._id}}">Save Article</button>
+            <button type="button" class="btn btn-warning pull-right saved-page" data-id="{{this._id}}">Remove Saved</button>
             <div class="clearfix"></div>
           </div>
           <div class="panel-body">
