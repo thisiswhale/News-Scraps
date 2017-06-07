@@ -27,12 +27,11 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static("public"));
 
 //Database configuration with mongoose
-if(process.env.MONGODB_URI){
-//===========Heroku App==================
+if (process.env.MONGODB_URI) {
+  //===========Heroku App==================
   mongoose.connect(process.env.MONGODB_URI);
-}
-else{
-//===========LOCAL=======================
+} else {
+  //===========LOCAL=======================
   mongoose.connect("mongodb://localhost/website");
 }
 var db = mongoose.connection;
@@ -99,15 +98,27 @@ app.get("/scrape", function(req, res) {
 });
 
 //directs to render all saved articles when saved = true
-app.get("/articles/saved", function(req, res) {
+app.get("/articles/saved/api", function(req, res) {
+  Article.find({saved: true}).populate("notes").exec(function(error, doc) {
+    if (error) {
+      res.send(error);
+    } else {
+      res.send(doc);
+      //console.log(doc.)
+    }
+  });
+});
+
+app.get("/articles/saved/", function(req, res) {
   Article.find({
     saved: true
-  }, function(error, doc) {
+  }, function(error, data) {
     if (error) {
       console.log(error);
     } else {
+
       var hbsObjects = {
-        articles: doc
+        articles: data
       };
       console.log(hbsObjects);
       res.render("savedArticles", hbsObjects);
@@ -133,8 +144,8 @@ app.get("/articles/save/:id", function(req, res) {
 });
 
 //Create a new note or replace an existing note
-app.post("/article/saved/note/:id", function(req, res) {
-  var newNote = new Note(req.body);
+app.post("/articles/saved/note/:id", function(req, res) {
+  var newNote = new Note({title: req.body.title, body: req.body.body, written: true});
 
   newNote.save(function(error, doc) {
     if (error) {
@@ -143,12 +154,16 @@ app.post("/article/saved/note/:id", function(req, res) {
       Article.findOneAndUpdate({
         _id: req.params.id
       }, {
-        title: doc.body.title,
-        body: doc.body.body
-      }).exec(function(err, doc) {
+        $push: {
+          "note": doc._id
+        }
+      }, {
+        new: true
+      }, function(err, doc) {
         if (err) {
           console.log(err);
         } else {
+          console.log("article saved");
           res.redirect("/articles/saved");
         }
       });
@@ -156,18 +171,16 @@ app.post("/article/saved/note/:id", function(req, res) {
   });
 });
 
-app.post("/article/save/:id", function(req, res) {
-
-  Note.findOneAndRemove({
-    "_id":req.params.id
-  }, function(error, doc) {
+app.post("/articles/saved/:id", function(req, res) {
+  Article.findOneAndUpdate({
+    "_id": req.params.id
+  }, {$set:{saved:false}}, function(error, doc) {
     if (error) {
       console.log(error);
     } else {
-      res.redirect("/articles/saved");
+      res.send(doc);
     }
   });
-
 
 });
 
@@ -185,5 +198,5 @@ app.get("/scrape/api", function(req, res) {
 //=============================End========================================
 var PORT = process.env.PORT || 3000;
 app.listen(PORT, function() {
-  console.log("App running on port "+PORT+" !");
+  console.log("App running on port " + PORT + " !");
 });

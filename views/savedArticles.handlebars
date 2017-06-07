@@ -23,11 +23,16 @@
           <div class="panel-heading">
             <a href="{{this.link}}"><h3 class="panel-title pull-left">{{this.title}}</h3></a>
             <button type="button" class=" btn btn-primary pull-right note-article" data-toggle="modal" data-target="#{{this._id}}" data-id="{{this._id}}">Note Article</button>
+            <form action="/articles/save/{{this._id}}" method="post">
             <button type="button" class="btn btn-warning pull-right remove-saved" data-id="{{this._id}}">Remove Saved</button>
+          </form>
             <div class="clearfix"></div>
           </div>
           <div class="panel-body">
             <p>{{this.blurb}}</p>
+            {{!-- <p>
+              <strong>Comments: </strong>{{this.note}}
+            </p> --}}
           </div>
         </div>
       </div>
@@ -39,19 +44,21 @@
 
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h2 class="text-center save-title" id="collect-modal-input">{{this.title}}</h2>
-            </div>
-            <form>
-              <div class="modal-body">
-                <label for="message-text" class="control-label">Notes:</label>
-                <textarea class="form-control save-body" rows="8" id="{{this._id}}">{{this.body}}</textarea>
-              </div>
-            </form>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary save-note-change">Save changes</button>
+              <form action="/articles/saved/note/{{this._id}}" method="post">
+              <h2 class="text-center save-title" id="collect-modal-input" name="title">{{this.title}}</h2>
             </div>
 
+              <div class="modal-body">
+                <label for="message-text" class="control-label">Notes:</label>
+                <textarea class="form-control save-body" rows="8" id="{{this._id}}" name="body">{{this.body}}</textarea>
+              </div>
+
+            <div class="modal-footer">
+
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <input type="submit" class="btn btn-primary save-note-change"  value="Save changes">
+            </div>
+            </form>
           </div>
         </div>
       </div>
